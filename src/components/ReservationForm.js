@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import { getStorage, setStorage } from '../utils/storage';
 
 const ReservationForm = ({ onReservationSuccess }) => {
@@ -20,25 +21,50 @@ const ReservationForm = ({ onReservationSuccess }) => {
     }));
   };
 
+  const validateWhatsApp = (number) => {
+    return /^\d{10}$/.test(number);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Asegurarse de que existe una lista previa
-    const existing = getStorage('reservations') || [];
+    if (!validateWhatsApp(formData.whatsapp)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Número inválido',
+        text: 'El número de WhatsApp debe tener exactamente 10 dígitos.',
+      });
+      return;
+    }
 
+    const reservations = getStorage('reservations');
     const newReservation = {
       ...formData,
       date: new Date().toISOString(),
       eventDate: '2025-05-25'
     };
 
-    // Guardar nueva reserva
-    setStorage('reservations', [...existing, newReservation]);
+    setStorage('reservations', [...reservations, newReservation]);
 
-    // Confirmación
-    alert('✅ ¡Reserva registrada con éxito!');
+    // Mostrar alerta con imagen y confirmación
+    Swal.fire({
+      title: '¡Reserva registrada!',
+      html: `
+        <p><strong>Este registro no asegura tu lugar.</strong></p>
+        <p>Nos pondremos en contacto contigo vía WhatsApp para confirmar tu asistencia.</p>
+        ${formData.isGroup && formData.groupName
+          ? `<p>Comparte este nombre de grupo con tus acompañantes:</p>
+             <p style="font-weight:bold; font-size:18px;">${formData.groupName}</p>`
+          : ''
+        }
+      `,
+      imageUrl: 'https://i.imgur.com/Wx5xoxV.png',
+      imageWidth: 100,
+      imageHeight: 100,
+      confirmButtonText: 'Aceptar',
+    });
 
-    // Limpiar formulario
+    // Limpia el formulario
     setFormData({
       name: '',
       age: '',
@@ -49,9 +75,7 @@ const ReservationForm = ({ onReservationSuccess }) => {
       acceptRecording: false
     });
 
-    if (onReservationSuccess) {
-      onReservationSuccess(newReservation);
-    }
+    onReservationSuccess(newReservation);
   };
 
   return (
@@ -92,6 +116,7 @@ const ReservationForm = ({ onReservationSuccess }) => {
           onChange={handleChange}
           className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           required
+          placeholder="Ej: 5522450250"
         />
       </div>
 
@@ -123,14 +148,15 @@ const ReservationForm = ({ onReservationSuccess }) => {
 
       {formData.isGroup && (
         <div className="mb-4">
-          <label className="block text-gray-300 mb-2">Nombre del Grupo (elige un código único para tu grupo)</label>
+          <label className="block text-gray-300 mb-2">Nombre del Grupo (elige un código único)</label>
           <input
             type="text"
             name="groupName"
             value={formData.groupName}
             onChange={handleChange}
-            placeholder="Ej: Teamellie25, MesaEllie23, FirefliesDan55i"
+            placeholder="Ej: TeamEllie25, FirefliesCondesa"
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+            required={formData.isGroup}
           />
         </div>
       )}
