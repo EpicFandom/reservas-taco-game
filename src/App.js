@@ -4,7 +4,7 @@ import PanelAdmin from './components/PanelAdmin';
 
 function App() {
   const queryParams = new URLSearchParams(window.location.search);
-  const esAdmin = queryParams.get('admin') === 'adminepic.2025';
+  const esAdmin = queryParams.get('admin') === 'epic.2025';
   const [vista, setVista] = React.useState('reserva');
 
   return (
