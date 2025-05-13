@@ -86,10 +86,12 @@ const ReservationForm = () => {
       Swal.fire({
         title: '<strong>¡Gracias por registrarte!</strong>',
         html: `
-          <p style="margin-bottom: 10px;">Si alguien más de tu grupo se va a registrar, comparte este nombre de grupo con ellos:</p>
           ${
             groupNameFinal
-              ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
+              ? `
+                <p style="margin-bottom: 10px;">Si alguien más de tu grupo se va a registrar, comparte este nombre de grupo con ellos:</p>
+                <p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>
+              `
               : ''
           }
           <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
@@ -127,8 +129,8 @@ const ReservationForm = () => {
         <span className="text-sm text-yellow-300">25 de Mayo 2025</span>
       </p>
       <p className="text-yellow-300 text-center mt-2 text-sm italic">
-  Este formulario nos permitirá contactarte. Recuerda: es cupo limitado.
-</p>
+        Este formulario nos permitirá contactarte. Recuerda: es cupo limitado.
+      </p>
 
       <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
         <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
