@@ -20,6 +20,11 @@ const ReservationForm = () => {
     }));
   };
 
+  const validarNombre = (nombre) => {
+    const partes = nombre.trim().split(' ');
+    return partes.length >= 2 && partes.every(p => p.length >= 3);
+  };
+
   const validarWhatsapp = (num) => {
     return /^\d{10}$/.test(num);
   };
@@ -32,6 +37,18 @@ const ReservationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarNombre(formData.name)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Nombre inválido',
+        text: 'Ingresa al menos nombre y apellido (mínimo 3 letras cada uno).',
+        background: '#1f2937',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
+      });
+      return;
+    }
 
     if (!validarWhatsapp(formData.whatsapp)) {
       Swal.fire({
@@ -67,23 +84,23 @@ const ReservationForm = () => {
       });
 
       Swal.fire({
-  title: '¡Gracias por registrarte!',
-  html: `
-    <p style="margin-bottom: 10px;"><strong>Si alguien más de tu grupo se va a registrar</strong>, comparte este nombre de grupo con tus acompañantes.</p>
-    ${
-      groupNameFinal
-        ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
-        : ''
-    }
-    <p style="margin-bottom: 10px;">Si tu reserva es confirmada, <strong>nosotros te contactaremos por WhatsApp</strong>.</p>
-    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de recuperación simbólica de <strong>$50 pesos por persona</strong>, que incluye una bebida (limonada, refresco o cerveza).</p>
-    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu lugar todavía.</em><br>Muy pronto recibirás noticias nuestras.</p>
-  `,
-  background: '#111827',
-  color: '#fff',
-  confirmButtonColor: '#facc15',
-  confirmButtonText: 'Aceptar',
-});
+        title: '¡Gracias por registrarte!',
+        html: `
+          <p style="margin-bottom: 10px;"><strong>Si alguien más de tu grupo se va a registrar</strong>, comparte este nombre de grupo con tus acompañantes.</p>
+          ${
+            groupNameFinal
+              ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
+              : ''
+          }
+          <p style="margin-bottom: 10px;">Si tu reserva es confirmada, <strong>nosotros te contactaremos por WhatsApp</strong>.</p>
+          <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de recuperación simbólica de <strong>$50 pesos por persona</strong>, que incluye una bebida (limonada, refresco o cerveza).</p>
+          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu lugar todavía.</em><br>Muy pronto recibirás noticias nuestras.</p>
+        `,
+        background: '#111827',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
+        confirmButtonText: 'Aceptar',
+      });
 
       setFormData({
         name: '',
@@ -105,7 +122,7 @@ const ReservationForm = () => {
       <h2 className="text-yellow-400 text-2xl mb-4 font-game">Reserva tu Lugar</h2>
 
       <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Nombre Completo</label>
+        <label className="block text-gray-300 mb-2">Nombre y Apellido</label>
         <input
           type="text"
           name="name"
@@ -117,7 +134,7 @@ const ReservationForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Edad</label>
+        <label className="block text-gray-300 mb-2">Edad (Solo mayores de edad, requisito obligatorio)</label>
         <input
           type="number"
           name="age"
@@ -130,7 +147,7 @@ const ReservationForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-300 mb-2">WhatsApp</label>
+        <label className="block text-gray-300 mb-2">Número de WhatsApp (Vía de comunicación para confirmar tu reserva)</label>
         <input
           type="tel"
           name="whatsapp"
@@ -143,7 +160,7 @@ const ReservationForm = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Número de Personas (max 2)</label>
+        <label className="block text-gray-300 mb-2">Número de personas (1 o 2 máximo por reserva - Cupo limitado)</label>
         <select
           name="people"
           value={formData.people}
@@ -164,13 +181,14 @@ const ReservationForm = () => {
             onChange={handleChange}
             className="mr-2"
           />
-          ¿Eres parte de un grupo?
+          ¿Eres parte de un grupo? (Si lo eres, selecciona esta casilla)
         </label>
       </div>
 
       {formData.isGroup && (
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Nombre del Grupo</label>
+          <p className="text-sm text-gray-400 mb-2">Si son un grupo, definan un nombre para que intentemos acomodarlos juntos.</p>
           <input
             type="text"
             name="groupName"
@@ -192,7 +210,7 @@ const ReservationForm = () => {
             required
             className="mr-2"
           />
-          Acepto que puedo ser grabado durante el evento
+          Este evento podrá ser grabado con fines promocionales. Al asistir aceptas que tu imagen pueda aparecer en contenido de redes sociales.
         </label>
       </div>
 
