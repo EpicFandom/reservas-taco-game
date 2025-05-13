@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { getStorage, setStorage } from '../utils/storage';
 
-const ReservationForm = ({ onReservationSuccess }) => {
+const ReservationForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -10,61 +10,75 @@ const ReservationForm = ({ onReservationSuccess }) => {
     people: 1,
     isGroup: false,
     groupName: '',
-    acceptRecording: false
+    acceptRecording: false,
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
-  const validateWhatsApp = (number) => {
-    return /^\d{10}$/.test(number);
+  const validarWhatsapp = (num) => {
+    return /^\d{10}$/.test(num);
+  };
+
+  const generarNombreGrupo = () => {
+    const base = formData.name.trim().split(' ')[0] || 'grupo';
+    const codigo = Math.floor(Math.random() * 100);
+    return `${base}${codigo}`;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validateWhatsApp(formData.whatsapp)) {
+    if (!validarWhatsapp(formData.whatsapp)) {
       Swal.fire({
         icon: 'error',
         title: 'Número inválido',
         text: 'El número de WhatsApp debe tener exactamente 10 dígitos.',
+        background: '#1f2937',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
       });
       return;
     }
 
-    const reservations = getStorage('reservations');
-    const newReservation = {
+    const reservas = getStorage('reservations');
+    const groupNameFinal = formData.isGroup
+      ? formData.groupName || generarNombreGrupo()
+      : null;
+
+    const nuevaReserva = {
       ...formData,
+      groupName: groupNameFinal,
       date: new Date().toISOString(),
-      eventDate: '2025-05-25'
+      eventDate: '2025-05-25',
     };
 
-    setStorage('reservations', [...reservations, newReservation]);
+    setStorage('reservations', [...reservas, nuevaReserva]);
 
-    // Mostrar alerta con imagen y confirmación
     Swal.fire({
       title: '¡Reserva registrada!',
       html: `
-        <p><strong>Este registro no asegura tu lugar.</strong></p>
-        <p>Nos pondremos en contacto contigo vía WhatsApp para confirmar tu asistencia.</p>
-        ${formData.isGroup && formData.groupName
-          ? `<p>Comparte este nombre de grupo con tus acompañantes:</p>
-             <p style="font-weight:bold; font-size:18px;">${formData.groupName}</p>`
-          : ''
+        <p><strong>Este registro no asegura tu lugar.</strong><br>
+        Nos pondremos en contacto contigo vía WhatsApp para confirmar tu asistencia.</p>
+        ${
+          groupNameFinal
+            ? `<p>Comparte este nombre de grupo con tus acompañantes: <strong>${groupNameFinal}</strong></p>`
+            : ''
         }
       `,
-      imageUrl: 'https://i.imgur.com/Wx5xoxV.png',
-      imageWidth: 100,
-      imageHeight: 100,
+      imageUrl: 'https://i.postimg.cc/nhqvj92M/Zombiepng.png',
+      imageHeight: 120,
+      background: '#111827',
+      color: '#fff',
+      confirmButtonColor: '#8b5cf6',
       confirmButtonText: 'Aceptar',
     });
 
-    // Limpia el formulario
     setFormData({
       name: '',
       age: '',
@@ -72,16 +86,14 @@ const ReservationForm = ({ onReservationSuccess }) => {
       people: 1,
       isGroup: false,
       groupName: '',
-      acceptRecording: false
+      acceptRecording: false,
     });
-
-    onReservationSuccess(newReservation);
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500">
       <h2 className="text-yellow-400 text-2xl mb-4 font-game">Reserva tu Lugar</h2>
-      
+
       <div className="mb-4">
         <label className="block text-gray-300 mb-2">Nombre Completo</label>
         <input
@@ -89,8 +101,8 @@ const ReservationForm = ({ onReservationSuccess }) => {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           required
+          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
         />
       </div>
 
@@ -101,9 +113,9 @@ const ReservationForm = ({ onReservationSuccess }) => {
           name="age"
           value={formData.age}
           onChange={handleChange}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           required
           min="18"
+          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
         />
       </div>
 
@@ -114,9 +126,9 @@ const ReservationForm = ({ onReservationSuccess }) => {
           name="whatsapp"
           value={formData.whatsapp}
           onChange={handleChange}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           required
           placeholder="Ej: 5522450250"
+          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
         />
       </div>
 
@@ -148,15 +160,14 @@ const ReservationForm = ({ onReservationSuccess }) => {
 
       {formData.isGroup && (
         <div className="mb-4">
-          <label className="block text-gray-300 mb-2">Nombre del Grupo (elige un código único)</label>
+          <label className="block text-gray-300 mb-2">Nombre del Grupo</label>
           <input
             type="text"
             name="groupName"
             value={formData.groupName}
             onChange={handleChange}
-            placeholder="Ej: TeamEllie25, FirefliesCondesa"
+            placeholder="Ej: Fireflies25"
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-            required={formData.isGroup}
           />
         </div>
       )}
@@ -168,8 +179,8 @@ const ReservationForm = ({ onReservationSuccess }) => {
             name="acceptRecording"
             checked={formData.acceptRecording}
             onChange={handleChange}
-            className="mr-2"
             required
+            className="mr-2"
           />
           Acepto que puedo ser grabado durante el evento
         </label>
