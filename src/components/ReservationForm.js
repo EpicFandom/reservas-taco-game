@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import { getStorage, setStorage } from '../utils/storage';
 
 const ReservationForm = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +30,7 @@ const ReservationForm = () => {
     return `${base}${codigo}`;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validarWhatsapp(formData.whatsapp)) {
@@ -46,48 +45,59 @@ const ReservationForm = () => {
       return;
     }
 
-    const reservas = getStorage('reservations');
     const groupNameFinal = formData.isGroup
       ? formData.groupName || generarNombreGrupo()
       : null;
 
-    const nuevaReserva = {
+    const payload = {
       ...formData,
       groupName: groupNameFinal,
       date: new Date().toISOString(),
       eventDate: '2025-05-25',
     };
 
-    setStorage('reservations', [...reservas, nuevaReserva]);
+    try {
+      await fetch("https://script.google.com/macros/s/AKfycbzWtF29EQqUaSo3WET9SNX_eXv2-QLw2uKq-Ew8P-ABvhv3kruApR8K7wsTtCurKtvnQA/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    Swal.fire({
-      title: '¡Reserva registrada!',
-      html: `
-        <p><strong>Este registro no asegura tu lugar.</strong><br>
-        Nos pondremos en contacto contigo vía WhatsApp para confirmar tu asistencia.</p>
-        ${
-          groupNameFinal
-            ? `<p>Comparte este nombre de grupo con tus acompañantes: <strong>${groupNameFinal}</strong></p>`
-            : ''
-        }
-      `,
-      imageUrl: 'https://i.postimg.cc/nhqvj92M/Zombiepng.png',
-      imageHeight: 120,
-      background: '#111827',
-      color: '#fff',
-      confirmButtonColor: '#8b5cf6',
-      confirmButtonText: 'Aceptar',
-    });
+      Swal.fire({
+  title: '¡Gracias por registrarte!',
+  html: `
+    <p style="margin-bottom: 10px;"><strong>Si alguien más de tu grupo se va a registrar</strong>, comparte este nombre de grupo con tus acompañantes.</p>
+    ${
+      groupNameFinal
+        ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
+        : ''
+    }
+    <p style="margin-bottom: 10px;">Si tu reserva es confirmada, <strong>nosotros te contactaremos por WhatsApp</strong>.</p>
+    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de recuperación simbólica de <strong>$50 pesos por persona</strong>, que incluye una bebida (limonada, refresco o cerveza).</p>
+    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu lugar todavía.</em><br>Muy pronto recibirás noticias nuestras.</p>
+  `,
+  background: '#111827',
+  color: '#fff',
+  confirmButtonColor: '#facc15',
+  confirmButtonText: 'Aceptar',
+});
 
-    setFormData({
-      name: '',
-      age: '',
-      whatsapp: '',
-      people: 1,
-      isGroup: false,
-      groupName: '',
-      acceptRecording: false,
-    });
+      setFormData({
+        name: '',
+        age: '',
+        whatsapp: '',
+        people: 1,
+        isGroup: false,
+        groupName: '',
+        acceptRecording: false,
+      });
+    } catch (error) {
+      alert("Ocurrió un error al guardar la reserva. Intenta más tarde.");
+      console.error(error);
+    }
   };
 
   return (
