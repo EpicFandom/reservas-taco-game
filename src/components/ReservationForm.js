@@ -84,22 +84,22 @@ const ReservationForm = () => {
       });
 
       Swal.fire({
-        title: '¡Gracias por registrarte!',
-        html: `
-          <p style="margin-bottom: 10px;"><strong>Si alguien más de tu grupo se va a registrar</strong>, comparte este nombre de grupo con tus acompañantes.</p>
-          ${
-            groupNameFinal
-              ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
-              : ''
-          }
-          <p style="margin-bottom: 10px;">Si tu reserva es confirmada, <strong>nosotros te contactaremos por WhatsApp</strong>.</p>
-          <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de recuperación simbólica de <strong>$50 pesos por persona</strong>, que incluye una bebida (limonada, refresco o cerveza).</p>
-          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu lugar todavía.</em><br>Muy pronto recibirás noticias nuestras.</p>
-        `,
-        background: '#111827',
-        color: '#fff',
-        confirmButtonColor: '#facc15',
-        confirmButtonText: 'Aceptar',
+  title: '<strong>¡Gracias por registrarte!</strong>',
+  html: `
+    <p style="margin-bottom: 10px;">Si alguien más de tu grupo se va a registrar, comparte este nombre de grupo con ellos:</p>
+    ${
+      groupNameFinal
+        ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
+        : ''
+    }
+    <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
+    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
+    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
+  `,
+  background: '#111827',
+  color: '#fff',
+  confirmButtonColor: '#facc15',
+  confirmButtonText: 'Aceptar',
       });
 
       setFormData({
