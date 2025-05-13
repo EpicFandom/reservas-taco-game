@@ -84,22 +84,22 @@ const ReservationForm = () => {
       });
 
       Swal.fire({
-  title: '<strong>¡Gracias por registrarte!</strong>',
-  html: `
-    <p style="margin-bottom: 10px;">Si alguien más de tu grupo se va a registrar, comparte este nombre de grupo con ellos:</p>
-    ${
-      groupNameFinal
-        ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
-        : ''
-    }
-    <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
-    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
-    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
-  `,
-  background: '#111827',
-  color: '#fff',
-  confirmButtonColor: '#facc15',
-  confirmButtonText: 'Aceptar',
+        title: '<strong>¡Gracias por registrarte!</strong>',
+        html: `
+          <p style="margin-bottom: 10px;">Si alguien más de tu grupo se va a registrar, comparte este nombre de grupo con ellos:</p>
+          ${
+            groupNameFinal
+              ? `<p style="margin-bottom: 10px;">Nombre del grupo: <strong>${groupNameFinal}</strong></p>`
+              : ''
+          }
+          <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
+          <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
+          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
+        `,
+        background: '#111827',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
+        confirmButtonText: 'Aceptar',
       });
 
       setFormData({
@@ -118,109 +118,122 @@ const ReservationForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500">
-      <h2 className="text-yellow-400 text-2xl mb-4 font-game">Reserva tu Lugar</h2>
+    <div>
+      <h1 className="text-4xl font-bold text-yellow-400 text-center mt-6">
+        TACO GAME SUCURSAL CONDESA
+      </h1>
+      <p className="text-white text-center mt-1">
+        Evento Final de Temporada: The Last of Us Parte II <br />
+        <span className="text-sm text-yellow-300">25 de Mayo 2025</span>
+      </p>
+      <p className="text-yellow-300 text-center mt-2 text-sm italic">
+  Este formulario nos permitirá contactarte. Recuerda: es cupo limitado.
+</p>
 
-      <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Nombre y Apellido</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
+        <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
 
-      <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Edad (Solo mayores de edad, requisito obligatorio)</label>
-        <input
-          type="number"
-          name="age"
-          value={formData.age}
-          onChange={handleChange}
-          required
-          min="18"
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Número de WhatsApp (Vía de comunicación para confirmar tu reserva)</label>
-        <input
-          type="tel"
-          name="whatsapp"
-          value={formData.whatsapp}
-          onChange={handleChange}
-          required
-          placeholder="Ej: 5522450250"
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-gray-300 mb-2">Número de personas (1 o 2 máximo por reserva - Cupo limitado)</label>
-        <select
-          name="people"
-          value={formData.people}
-          onChange={handleChange}
-          className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label className="flex items-center text-gray-300">
-          <input
-            type="checkbox"
-            name="isGroup"
-            checked={formData.isGroup}
-            onChange={handleChange}
-            className="mr-2"
-          />
-          ¿Eres parte de un grupo? (Si lo eres, selecciona esta casilla)
-        </label>
-      </div>
-
-      {formData.isGroup && (
         <div className="mb-4">
-          <label className="block text-gray-300 mb-2">Nombre del Grupo</label>
-          <p className="text-sm text-gray-400 mb-2">Si son un grupo, definan un nombre para que intentemos acomodarlos juntos.</p>
+          <label className="block text-gray-300 mb-2">Nombre y Apellido</label>
           <input
             type="text"
-            name="groupName"
-            value={formData.groupName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            placeholder="Ej: Fireflies25"
+            required
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           />
         </div>
-      )}
 
-      <div className="mb-4">
-        <label className="flex items-center text-gray-300">
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Edad (Solo mayores de edad, requisito obligatorio)</label>
           <input
-            type="checkbox"
-            name="acceptRecording"
-            checked={formData.acceptRecording}
+            type="number"
+            name="age"
+            value={formData.age}
             onChange={handleChange}
             required
-            className="mr-2"
+            min="18"
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           />
-          Este evento podrá ser grabado con fines promocionales. Al asistir aceptas que tu imagen pueda aparecer en contenido de redes sociales.
-        </label>
-      </div>
+        </div>
 
-      <button
-        type="submit"
-        className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded transition-colors"
-      >
-        Confirmar Reserva
-      </button>
-    </form>
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Número de WhatsApp (Vía de comunicación para confirmar tu reserva)</label>
+          <input
+            type="tel"
+            name="whatsapp"
+            value={formData.whatsapp}
+            onChange={handleChange}
+            required
+            placeholder="Ej: 5522450250"
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Número de personas (1 o 2 máximo por reserva - Cupo limitado)</label>
+          <select
+            name="people"
+            value={formData.people}
+            onChange={handleChange}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="flex items-center text-gray-300">
+            <input
+              type="checkbox"
+              name="isGroup"
+              checked={formData.isGroup}
+              onChange={handleChange}
+              className="mr-2"
+            />
+            ¿Eres parte de un grupo? (Si lo eres, selecciona esta casilla)
+          </label>
+        </div>
+
+        {formData.isGroup && (
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Nombre del Grupo</label>
+            <p className="text-sm text-gray-400 mb-2">Si son un grupo, definan un nombre para que intentemos acomodarlos juntos.</p>
+            <input
+              type="text"
+              name="groupName"
+              value={formData.groupName}
+              onChange={handleChange}
+              placeholder="Ej: Fireflies25"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+            />
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="flex items-center text-gray-300">
+            <input
+              type="checkbox"
+              name="acceptRecording"
+              checked={formData.acceptRecording}
+              onChange={handleChange}
+              required
+              className="mr-2"
+            />
+            Este evento podrá ser grabado con fines promocionales. Al asistir aceptas que tu imagen pueda aparecer en contenido de redes sociales.
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded transition-colors"
+        >
+          Confirmar Reserva
+        </button>
+      </form>
+    </div>
   );
 };
 
