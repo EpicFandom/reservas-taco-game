@@ -22,15 +22,36 @@ const ReservationForm = ({ onReservationSuccess }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const reservations = getStorage('reservations');
+
+    // Asegurarse de que existe una lista previa
+    const existing = getStorage('reservations') || [];
+
     const newReservation = {
       ...formData,
       date: new Date().toISOString(),
       eventDate: '2025-05-25'
     };
-    
-    setStorage('reservations', [...reservations, newReservation]);
-    onReservationSuccess(newReservation);
+
+    // Guardar nueva reserva
+    setStorage('reservations', [...existing, newReservation]);
+
+    // Confirmación
+    alert('✅ ¡Reserva registrada con éxito!');
+
+    // Limpiar formulario
+    setFormData({
+      name: '',
+      age: '',
+      whatsapp: '',
+      people: 1,
+      isGroup: false,
+      groupName: '',
+      acceptRecording: false
+    });
+
+    if (onReservationSuccess) {
+      onReservationSuccess(newReservation);
+    }
   };
 
   return (
