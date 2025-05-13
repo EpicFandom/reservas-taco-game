@@ -1,5 +1,5 @@
 import React from 'react';
-import FormularioReservas from './components/FormularioReservas';
+import ReservationForm from './components/ReservationForm';
 import PanelAdmin from './components/PanelAdmin';
 
 function App() {
@@ -9,9 +9,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-4xl font-bold text-center text-yellow-400">TACO GAME SUCURSAL CONDESA</h1>
-      <p className="text-center text-sm mt-1">Evento Final de Temporada: The Last of Us Parte II<br />25 de Mayo 2025</p>
-      
+      <h1 className="text-4xl font-bold text-center text-yellow-400">
+        TACO GAME SUCURSAL CONDESA
+      </h1>
+      <p className="text-center text-sm mt-1">
+        Evento Final de Temporada: The Last of Us Parte II<br />
+        25 de Mayo 2025
+      </p>
+
       <div className="flex justify-center mt-4 gap-4">
         <button
           className={`px-4 py-2 rounded ${vista === 'reserva' ? 'bg-yellow-500' : 'bg-gray-700'}`}
@@ -31,7 +36,7 @@ function App() {
       </div>
 
       <div className="mt-6">
-        {vista === 'reserva' && <FormularioReservas />}
+        {vista === 'reserva' && <ReservationForm />}
         {vista === 'admin' && esAdmin && <PanelAdmin />}
       </div>
     </div>
@@ -39,6 +44,5 @@ function App() {
 }
 
 export default App;
-
 
 // DONE
