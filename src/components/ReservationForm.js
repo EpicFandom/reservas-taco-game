@@ -173,7 +173,7 @@ const ReservationForm = () => {
         <div className="mb-4">
           <label className="flex items-center text-gray-300">
             <input type="checkbox" className="mr-2" checked={showGroupOptions} onChange={() => setShowGroupOptions(!showGroupOptions)} />
-            Eres un grupo mayor a 5 personas o tienes el nombre de una mesa y quieres unirte. Selecciona la casilla.
+            Eres un grupo mayor a 4 personas o tienes el nombre de una mesa y quieres unirte. Selecciona la casilla.
           </label>
         </div>
 
