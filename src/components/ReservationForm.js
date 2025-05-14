@@ -96,7 +96,7 @@ const ReservationForm = () => {
       });
 
       const groupMessage = finalGroup
-        ? `<p style="margin-bottom: 10px;">Nombre de la mesa: <strong>${finalGroup}</strong></p>`
+        ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo. Esto nos ayudará a ubicarlos juntos o lo más cerca posible: <strong>${finalGroup}</strong></p>`
         : '';
 
       Swal.fire({
