@@ -7,10 +7,11 @@ const ReservationForm = () => {
     age: '',
     whatsapp: '',
     people: 1,
-    groupOption: '',
-    groupCode: '',
+    groupName: '',
     acceptRecording: false,
   });
+
+  const [groupOption, setGroupOption] = useState(null); // 'create' o 'join'
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -26,12 +27,6 @@ const ReservationForm = () => {
   };
 
   const validarWhatsapp = (num) => /^\d{10}$/.test(num);
-
-  const generarCodigoGrupo = () => {
-    const base = formData.name.trim().split(' ')[0] || 'Grupo';
-    const codigo = Math.floor(Math.random() * 100);
-    return `${base}${codigo}`;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,42 +55,30 @@ const ReservationForm = () => {
       return;
     }
 
-    const finalGroupCode =
-      formData.groupOption === 'crear'
-        ? formData.groupCode || generarCodigoGrupo()
-        : formData.groupOption === 'unirse'
-        ? formData.groupCode
-        : null;
-
     const payload = {
       ...formData,
-      groupCode: finalGroupCode,
       date: new Date().toISOString(),
       eventDate: '2025-05-25',
     };
 
     try {
-      await fetch(
-        'https://script.google.com/macros/s/AKfycbzWtF29EQqUaSo3WET9SNX_eXv2-QLw2uKq-Ew8P-ABvhv3kruApR8K7wsTtCurKtvnQA/exec',
-        {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const mensajeGrupo =
-        finalGroupCode && formData.groupOption === 'crear'
-          ? `<p style="margin-bottom: 10px;">Comparte este código de grupo con tus acompañantes: <strong>${finalGroupCode}</strong></p>`
-          : '';
+      await fetch("https://script.google.com/macros/s/AKfycbzWtF29EQqUaSo3WET9SNX_eXv2-QLw2uKq-Ew8P-ABvhv3kruApR8K7wsTtCurKtvnQA/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
       Swal.fire({
         title: '<strong>¡Gracias por registrarte!</strong>',
         html: `
-          ${mensajeGrupo}
+          ${
+            formData.groupName
+              ? `<p style="margin-bottom: 10px;">Comparte este nombre de mesa con tus acompañantes: <strong>${formData.groupName}</strong></p>`
+              : ''
+          }
           <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
           <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
           <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
@@ -111,12 +94,12 @@ const ReservationForm = () => {
         age: '',
         whatsapp: '',
         people: 1,
-        groupOption: '',
-        groupCode: '',
+        groupName: '',
         acceptRecording: false,
       });
+      setGroupOption(null);
     } catch (error) {
-      alert('Ocurrió un error al guardar la reserva. Intenta más tarde.');
+      alert("Ocurrió un error al guardar la reserva. Intenta más tarde.");
       console.error(error);
     }
   };
@@ -134,10 +117,7 @@ const ReservationForm = () => {
         Este formulario nos permitirá contactarte. Recuerda: es cupo limitado.
       </p>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4"
-      >
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
         <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
 
         <div className="mb-4">
@@ -186,45 +166,46 @@ const ReservationForm = () => {
             onChange={handleChange}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
           >
-            {[1, 2, 3, 4].map(n => (
-              <option key={n} value={n}>{n}</option>
+            {[1, 2, 3, 4].map((num) => (
+              <option key={num} value={num}>{num}</option>
             ))}
           </select>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-2">
           <label className="block text-gray-300 mb-2">¿Deseas agruparte con otras personas?</label>
           <div className="flex flex-col gap-2">
             <button
               type="button"
-              onClick={() => setFormData(prev => ({ ...prev, groupOption: 'crear' }))}
-              className={`px-4 py-2 rounded ${formData.groupOption === 'crear' ? 'bg-yellow-500' : 'bg-gray-700'}`}
+              onClick={() => setGroupOption('create')}
+              className={`px-4 py-2 rounded text-left ${groupOption === 'create' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
             >
-              Crear código de grupo
+              Son un grupo mayor a 5 personas: Crea un nombre de mesa para compartir con tus acompañantes.
             </button>
             <button
               type="button"
-              onClick={() => setFormData(prev => ({ ...prev, groupOption: 'unirse' }))}
-              className={`px-4 py-2 rounded ${formData.groupOption === 'unirse' ? 'bg-yellow-500' : 'bg-gray-700'}`}
+              onClick={() => setGroupOption('join')}
+              className={`px-4 py-2 rounded text-left ${groupOption === 'join' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
             >
-              Tengo un código de grupo
+              ¿Te vas a unir a una mesa existente? Escribe el nombre que te compartieron.
             </button>
           </div>
         </div>
 
-        {formData.groupOption && (
-          <div className="mb-4">
+        {groupOption && (
+          <div className="mb-4 mt-2">
             <label className="block text-gray-300 mb-2">
-              {formData.groupOption === 'crear'
-                ? 'Define un nombre de grupo para compartir con tus acompañantes'
-                : 'Escribe el código del grupo que te compartieron'}
+              {groupOption === 'create'
+                ? 'Nombre de la mesa para compartir con tu grupo'
+                : 'Nombre de la mesa que te compartieron'}
             </label>
             <input
               type="text"
-              name="groupCode"
-              value={formData.groupCode}
+              name="groupName"
+              value={formData.groupName}
               onChange={handleChange}
-              placeholder="Ej: MesaBonviBand"
+              placeholder="Ej: MesaFireflies"
+              required
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
             />
           </div>
