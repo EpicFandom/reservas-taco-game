@@ -99,8 +99,8 @@ const ReservationForm = () => {
         body: JSON.stringify(payload),
       });
 
-      const mensajeMesa = formData.mesaOption === 'crear'
-  ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${formData.nombreMesaCrear}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
+      const mensajeMesa = payload.mesaOption === 'crear'
+  ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${payload.groupName}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
   : '';
 
 Swal.fire({
