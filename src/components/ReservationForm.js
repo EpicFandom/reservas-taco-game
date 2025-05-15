@@ -34,8 +34,8 @@ const ReservationForm = () => {
     if (!validarNombre(formData.name)) {
       return Swal.fire({
         icon: 'error',
-        title: 'Nombre inválido',
-        text: 'Ingresa al menos nombre y apellido (mínimo 3 letras cada uno).',
+        title: 'Nombre inv\u00e1lido',
+        text: 'Ingresa al menos nombre y apellido (m\u00ednimo 3 letras cada uno).',
         background: '#1f2937',
         color: '#fff',
         confirmButtonColor: '#facc15',
@@ -45,8 +45,8 @@ const ReservationForm = () => {
     if (!validarWhatsapp(formData.whatsapp)) {
       return Swal.fire({
         icon: 'error',
-        title: 'Número inválido',
-        text: 'El número de WhatsApp debe tener exactamente 10 dígitos.',
+        title: 'N\u00famero inv\u00e1lido',
+        text: 'El n\u00famero de WhatsApp debe tener exactamente 10 d\u00edgitos.',
         background: '#1f2937',
         color: '#fff',
         confirmButtonColor: '#facc15',
@@ -99,13 +99,17 @@ const ReservationForm = () => {
         body: JSON.stringify(payload),
       });
 
+      const mensajeMesa = formData.mesaOption === 'crear'
+        ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${groupName}</strong><br>Esto nos ayudar\u00e1 a ubicarlos juntos o lo m\u00e1s cerca posible.</p>`
+        : '';
+
       Swal.fire({
-        title: '<strong>¡Gracias por registrarte!</strong>',
+        title: '<strong>\u00a1Gracias por registrarte!</strong>',
         html: `
-          ${formData.mesaOption === 'crear' ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${groupName}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>` : ''}
+          ${mensajeMesa}
           <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
           <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
-          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
+          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva a\u00fan.</em></p>
         `,
         background: '#111827',
         color: '#fff',
@@ -124,7 +128,7 @@ const ReservationForm = () => {
         acceptRecording: false,
       });
     } catch (error) {
-      alert("Ocurrió un error al guardar la reserva. Intenta más tarde.");
+      alert("Ocurri\u00f3 un error al guardar la reserva. Intenta m\u00e1s tarde.");
       console.error(error);
     }
   };
@@ -132,10 +136,10 @@ const ReservationForm = () => {
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
       <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
-      {/* ... los campos que ya tenías visuales ... */}
+      <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nombre y Apellido" required />
+      {/* Agrega aquí el resto de inputs como edad, whatsapp, etc. (mismo patrón) */}
     </form>
   );
 };
 
 export default ReservationForm;
-
