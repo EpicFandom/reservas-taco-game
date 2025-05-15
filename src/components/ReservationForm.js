@@ -7,18 +7,27 @@ const ReservationForm = () => {
     age: '',
     whatsapp: '',
     people: 1,
-    groupName: '',
+    tableName: '',
+    joinTableName: '',
     acceptRecording: false,
   });
 
-  const [groupOption, setGroupOption] = useState(null); // 'create' o 'join'
+  const [showGroupOptions, setShowGroupOptions] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+
+    // Lógica para asegurar que solo un campo de grupo esté activo
+    if (name === 'tableName' && value !== '') {
+      setFormData((prev) => ({ ...prev, [name]: value, joinTableName: '' }));
+    } else if (name === 'joinTableName' && value !== '') {
+      setFormData((prev) => ({ ...prev, [name]: value, tableName: '' }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
   };
 
   const validarNombre = (nombre) => {
@@ -26,7 +35,9 @@ const ReservationForm = () => {
     return partes.length >= 2 && partes.every(p => p.length >= 3);
   };
 
-  const validarWhatsapp = (num) => /^\d{10}$/.test(num);
+  const validarWhatsapp = (num) => {
+    return /^\d{10}$/.test(num);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,8 +66,23 @@ const ReservationForm = () => {
       return;
     }
 
+    if (formData.tableName && formData.joinTableName) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Solo uno de los campos de grupo puede ser llenado',
+        text: 'Elige entre crear un nombre de mesa o unirte a una existente.',
+        background: '#1f2937',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
+      });
+      return;
+    }
+
+    const finalGroup = formData.tableName || formData.joinTableName || null;
+
     const payload = {
       ...formData,
+      groupName: finalGroup,
       date: new Date().toISOString(),
       eventDate: '2025-05-25',
     };
@@ -65,20 +91,18 @@ const ReservationForm = () => {
       await fetch("https://script.google.com/macros/s/AKfycbzWtF29EQqUaSo3WET9SNX_eXv2-QLw2uKq-Ew8P-ABvhv3kruApR8K7wsTtCurKtvnQA/exec", {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
+      const groupMessage = finalGroup
+        ? `<p style="margin-bottom: 10px;">Nombre de la mesa: <strong>${finalGroup}</strong></p>`
+        : '';
 
       Swal.fire({
         title: '<strong>¡Gracias por registrarte!</strong>',
         html: `
-          ${
-            formData.groupName
-              ? `<p style="margin-bottom: 10px;">Comparte este nombre de mesa con tus acompañantes: <strong>${formData.groupName}</strong></p>`
-              : ''
-          }
+          ${groupMessage}
           <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
           <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
           <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
@@ -94,10 +118,11 @@ const ReservationForm = () => {
         age: '',
         whatsapp: '',
         people: 1,
-        groupName: '',
+        tableName: '',
+        joinTableName: '',
         acceptRecording: false,
       });
-      setGroupOption(null);
+      setShowGroupOptions(false);
     } catch (error) {
       alert("Ocurrió un error al guardar la reserva. Intenta más tarde.");
       console.error(error);
@@ -122,113 +147,58 @@ const ReservationForm = () => {
 
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Nombre y Apellido</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-          />
+          <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white" />
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Edad (Solo mayores de 18 años)</label>
-          <input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            required
-            min="18"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-          />
+          <input type="number" name="age" value={formData.age} onChange={handleChange} required min="18" className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white" />
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Número de WhatsApp (Vía de comunicación para confirmar tu reserva)</label>
-          <input
-            type="tel"
-            name="whatsapp"
-            value={formData.whatsapp}
-            onChange={handleChange}
-            required
-            placeholder="Ej: 5522450250"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-          />
+          <input type="tel" name="whatsapp" value={formData.whatsapp} onChange={handleChange} required placeholder="Ej: 5522450250" className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white" />
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-300 mb-2">Número de personas (1 a 4 máximo por reserva - Cupo limitado)</label>
-          <select
-            name="people"
-            value={formData.people}
-            onChange={handleChange}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-          >
-            {[1, 2, 3, 4].map((num) => (
-              <option key={num} value={num}>{num}</option>
-            ))}
+          <select name="people" value={formData.people} onChange={handleChange} className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
           </select>
         </div>
 
-        <div className="mb-2">
-          <label className="block text-gray-300 mb-2">¿Deseas agruparte con otras personas?</label>
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setGroupOption('create')}
-              className={`px-4 py-2 rounded text-left ${groupOption === 'create' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
-            >
-              Son un grupo mayor a 5 personas: Crea un nombre de mesa para compartir con tus acompañantes.
-            </button>
-            <button
-              type="button"
-              onClick={() => setGroupOption('join')}
-              className={`px-4 py-2 rounded text-left ${groupOption === 'join' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
-            >
-              ¿Te vas a unir a una mesa existente? Escribe el nombre que te compartieron.
-            </button>
-          </div>
+        <div className="mb-4">
+          <label className="flex items-center text-gray-300">
+            <input type="checkbox" className="mr-2" checked={showGroupOptions} onChange={() => setShowGroupOptions(!showGroupOptions)} />
+            Eres un grupo mayor a 5 personas o tienes el nombre de una mesa y quieres unirte. Selecciona la casilla.
+          </label>
         </div>
 
-        {groupOption && (
-          <div className="mb-4 mt-2">
-            <label className="block text-gray-300 mb-2">
-              {groupOption === 'create'
-                ? 'Nombre de la mesa para compartir con tu grupo'
-                : 'Nombre de la mesa que te compartieron'}
-            </label>
-            <input
-              type="text"
-              name="groupName"
-              value={formData.groupName}
-              onChange={handleChange}
-              placeholder="Ej: MesaFireflies"
-              required
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
-            />
-          </div>
+        {showGroupOptions && (
+          <>
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Crear nombre de mesa (para compartirlo con tus acompañantes)</label>
+              <input type="text" name="tableName" value={formData.tableName} onChange={handleChange} placeholder="Ej: Mesa BonviBand" className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white" />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-300 mb-2">Unirte a una mesa existente (escribe el nombre que te compartieron)</label>
+              <input type="text" name="joinTableName" value={formData.joinTableName} onChange={handleChange} placeholder="Ej: Mesa BonviBand" className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white" />
+            </div>
+          </>
         )}
 
         <div className="mb-4">
           <label className="flex items-center text-gray-300">
-            <input
-              type="checkbox"
-              name="acceptRecording"
-              checked={formData.acceptRecording}
-              onChange={handleChange}
-              required
-              className="mr-2"
-            />
+            <input type="checkbox" name="acceptRecording" checked={formData.acceptRecording} onChange={handleChange} required className="mr-2" />
             Este evento podrá ser grabado con fines promocionales. Al asistir aceptas que tu imagen pueda aparecer en contenido de redes sociales.
           </label>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded transition-colors"
-        >
+        <button type="submit" className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded transition-colors">
           Confirmar Reserva
         </button>
       </form>
