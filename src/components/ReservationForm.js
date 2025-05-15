@@ -100,22 +100,22 @@ const ReservationForm = () => {
       });
 
       const mensajeMesa = formData.mesaOption === 'crear'
-        ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${groupName}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
-        : '';
+  ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${formData.nombreMesaCrear}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
+  : '';
 
-      Swal.fire({
-        title: '<strong>¡Gracias por registrarte!</strong>',
-        html: `
-          ${mensajeMesa}
-          <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
-          <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
-          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
-        `,
-        background: '#111827',
-        color: '#fff',
-        confirmButtonColor: '#facc15',
-        confirmButtonText: 'Aceptar',
-      });
+Swal.fire({
+  title: '<strong>¡Gracias por registrarte!</strong>',
+  html: `
+    ${mensajeMesa}
+    <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
+    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
+    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
+  `,
+  background: '#111827',
+  color: '#fff',
+  confirmButtonColor: '#facc15',
+  confirmButtonText: 'Aceptar',
+});
 
       setFormData({
         name: '',
