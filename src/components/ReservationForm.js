@@ -89,6 +89,10 @@ const ReservationForm = () => {
       eventDate: '2025-05-25',
     };
 
+    const mensajeMesa = formData.mesaOption === 'crear'
+      ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${groupName}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
+      : '';
+
     try {
       await fetch("https://script.google.com/macros/s/AKfycbzWtF29EQqUaSo3WET9SNX_eXv2-QLw2uKq-Ew8P-ABvhv3kruApR8K7wsTtCurKtvnQA/exec", {
         method: "POST",
@@ -99,23 +103,19 @@ const ReservationForm = () => {
         body: JSON.stringify(payload),
       });
 
-      const mensajeMesa = payload.mesaOption === 'crear'
-  ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${payload.groupName}</strong><br>Esto nos ayudará a ubicarlos juntos o lo más cerca posible.</p>`
-  : '';
-
-Swal.fire({
-  title: '<strong>¡Gracias por registrarte!</strong>',
-  html: `
-    ${mensajeMesa}
-    <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
-    <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
-    <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
-  `,
-  background: '#111827',
-  color: '#fff',
-  confirmButtonColor: '#facc15',
-  confirmButtonText: 'Aceptar',
-});
+      await Swal.fire({
+        title: '<strong>¡Gracias por registrarte!</strong>',
+        html: `
+          ${mensajeMesa}
+          <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
+          <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
+          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
+        `,
+        background: '#111827',
+        color: '#fff',
+        confirmButtonColor: '#facc15',
+        confirmButtonText: 'Aceptar',
+      });
 
       setFormData({
         name: '',
@@ -136,7 +136,7 @@ Swal.fire({
   return (
     <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
       <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
-      {/* ... los campos que ya tenías visuales ... */}
+      {/* ... tus campos como ya los tienes ... */}
     </form>
   );
 };
