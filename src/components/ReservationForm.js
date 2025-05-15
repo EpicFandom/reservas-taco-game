@@ -7,11 +7,11 @@ const ReservationForm = () => {
     age: '',
     whatsapp: '',
     people: 1,
-    mesaOption: '',
-    nombreMesaCrear: '',
-    nombreMesaUnirse: '',
+    groupName: '',
     acceptRecording: false,
   });
+
+  const [groupOption, setGroupOption] = useState(null); // 'create' o 'join'
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,59 +32,31 @@ const ReservationForm = () => {
     e.preventDefault();
 
     if (!validarNombre(formData.name)) {
-      return Swal.fire({
+      Swal.fire({
         icon: 'error',
-        title: 'Nombre inv\u00e1lido',
-        text: 'Ingresa al menos nombre y apellido (m\u00ednimo 3 letras cada uno).',
+        title: 'Nombre inválido',
+        text: 'Ingresa al menos nombre y apellido (mínimo 3 letras cada uno).',
         background: '#1f2937',
         color: '#fff',
         confirmButtonColor: '#facc15',
       });
+      return;
     }
 
     if (!validarWhatsapp(formData.whatsapp)) {
-      return Swal.fire({
+      Swal.fire({
         icon: 'error',
-        title: 'N\u00famero inv\u00e1lido',
-        text: 'El n\u00famero de WhatsApp debe tener exactamente 10 d\u00edgitos.',
+        title: 'Número inválido',
+        text: 'El número de WhatsApp debe tener exactamente 10 dígitos.',
         background: '#1f2937',
         color: '#fff',
         confirmButtonColor: '#facc15',
       });
+      return;
     }
-
-    if (formData.mesaOption === 'crear' && !formData.nombreMesaCrear.trim()) {
-      return Swal.fire({
-        icon: 'error',
-        title: 'Nombre de mesa requerido',
-        text: 'Por favor, escribe un nombre de mesa para compartir.',
-        background: '#1f2937',
-        color: '#fff',
-        confirmButtonColor: '#facc15',
-      });
-    }
-
-    if (formData.mesaOption === 'unirse' && !formData.nombreMesaUnirse.trim()) {
-      return Swal.fire({
-        icon: 'error',
-        title: 'Nombre de mesa requerido',
-        text: 'Por favor, escribe el nombre de la mesa que te compartieron.',
-        background: '#1f2937',
-        color: '#fff',
-        confirmButtonColor: '#facc15',
-      });
-    }
-
-    const groupName =
-      formData.mesaOption === 'crear'
-        ? formData.nombreMesaCrear.trim()
-        : formData.mesaOption === 'unirse'
-        ? formData.nombreMesaUnirse.trim()
-        : '';
 
     const payload = {
       ...formData,
-      groupName,
       date: new Date().toISOString(),
       eventDate: '2025-05-25',
     };
@@ -99,17 +71,17 @@ const ReservationForm = () => {
         body: JSON.stringify(payload),
       });
 
-      const mensajeMesa = formData.mesaOption === 'crear'
-        ? `<p style="margin-bottom: 10px;">Comparte el nombre de tu mesa con tu grupo: <strong>${groupName}</strong><br>Esto nos ayudar\u00e1 a ubicarlos juntos o lo m\u00e1s cerca posible.</p>`
-        : '';
-
       Swal.fire({
-        title: '<strong>\u00a1Gracias por registrarte!</strong>',
+        title: '<strong>¡Gracias por registrarte!</strong>',
         html: `
-          ${mensajeMesa}
+          ${
+            formData.groupName
+              ? `<p style="margin-bottom: 10px;">Comparte este nombre de mesa con tus acompañantes: <strong>${formData.groupName}</strong></p>`
+              : ''
+          }
           <p style="margin-bottom: 10px;"><strong>Te contactaremos por WhatsApp si tu lugar es confirmado.</strong></p>
           <p style="margin-bottom: 10px;"><strong>Recuerda:</strong> el evento tiene una cuota de <strong>$50 por persona</strong>, que incluye una bebida.</p>
-          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva a\u00fan.</em></p>
+          <p style="margin-bottom: 0;"><em>Este mensaje no confirma tu reserva aún.</em></p>
         `,
         background: '#111827',
         color: '#fff',
@@ -122,23 +94,145 @@ const ReservationForm = () => {
         age: '',
         whatsapp: '',
         people: 1,
-        mesaOption: '',
-        nombreMesaCrear: '',
-        nombreMesaUnirse: '',
+        groupName: '',
         acceptRecording: false,
       });
+      setGroupOption(null);
     } catch (error) {
-      alert("Ocurri\u00f3 un error al guardar la reserva. Intenta m\u00e1s tarde.");
+      alert("Ocurrió un error al guardar la reserva. Intenta más tarde.");
       console.error(error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
-      <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
-      <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nombre y Apellido" required />
-      {/* Agrega aquí el resto de inputs como edad, whatsapp, etc. (mismo patrón) */}
-    </form>
+    <div>
+      <h1 className="text-4xl font-bold text-yellow-400 text-center mt-6">
+        TACO GAME SUCURSAL CONDESA
+      </h1>
+      <p className="text-white text-center mt-1">
+        Evento Final de Temporada: The Last of Us Parte II <br />
+        <span className="text-sm text-yellow-300">25 de Mayo 2025</span>
+      </p>
+      <p className="text-yellow-300 text-center mt-2 text-sm italic">
+        Este formulario nos permitirá contactarte. Recuerda: es cupo limitado.
+      </p>
+
+      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
+        <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
+
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Nombre y Apellido</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Edad (Solo mayores de 18 años)</label>
+          <input
+            type="number"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            required
+            min="18"
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Número de WhatsApp (Vía de comunicación para confirmar tu reserva)</label>
+          <input
+            type="tel"
+            name="whatsapp"
+            value={formData.whatsapp}
+            onChange={handleChange}
+            required
+            placeholder="Ej: 5522450250"
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-300 mb-2">Número de personas (1 a 4 máximo por reserva - Cupo limitado)</label>
+          <select
+            name="people"
+            value={formData.people}
+            onChange={handleChange}
+            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+          >
+            {[1, 2, 3, 4].map((num) => (
+              <option key={num} value={num}>{num}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-2">
+          <label className="block text-gray-300 mb-2">¿Deseas agruparte con otras personas?</label>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => setGroupOption('create')}
+              className={`px-4 py-2 rounded text-left ${groupOption === 'create' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
+            >
+              Son un grupo mayor a 5 personas: Crea un nombre de mesa para compartir con tus acompañantes.
+            </button>
+            <button
+              type="button"
+              onClick={() => setGroupOption('join')}
+              className={`px-4 py-2 rounded text-left ${groupOption === 'join' ? 'bg-yellow-600 text-black' : 'bg-gray-700 text-white'}`}
+            >
+              ¿Te vas a unir a una mesa existente? Escribe el nombre que te compartieron.
+            </button>
+          </div>
+        </div>
+
+        {groupOption && (
+          <div className="mb-4 mt-2">
+            <label className="block text-gray-300 mb-2">
+              {groupOption === 'create'
+                ? 'Nombre de la mesa para compartir con tu grupo'
+                : 'Nombre de la mesa que te compartieron'}
+            </label>
+            <input
+              type="text"
+              name="groupName"
+              value={formData.groupName}
+              onChange={handleChange}
+              placeholder="Ej: MesaFireflies"
+              required
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white"
+            />
+          </div>
+        )}
+
+        <div className="mb-4">
+          <label className="flex items-center text-gray-300">
+            <input
+              type="checkbox"
+              name="acceptRecording"
+              checked={formData.acceptRecording}
+              onChange={handleChange}
+              required
+              className="mr-2"
+            />
+            Este evento podrá ser grabado con fines promocionales. Al asistir aceptas que tu imagen pueda aparecer en contenido de redes sociales.
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded transition-colors"
+        >
+          Confirmar Reserva
+        </button>
+      </form>
+    </div>
   );
 };
 
