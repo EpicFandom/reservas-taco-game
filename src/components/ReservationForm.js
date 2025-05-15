@@ -133,7 +133,12 @@ const ReservationForm = () => {
     }
   };
 
-  return null; // Este componente se exporta para integrarse con el resto del JSX
+  return (
+    <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg border border-yellow-500 mt-4">
+      <h2 className="text-yellow-400 text-2xl mb-4 font-game">Formulario de Pre-Registro</h2>
+      {/* ... los campos que ya tenías visuales ... */}
+    </form>
+  );
 };
 
 export default ReservationForm;
