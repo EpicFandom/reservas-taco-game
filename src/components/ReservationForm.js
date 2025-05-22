@@ -16,8 +16,8 @@ const ReservationForm = () => {
       </p>
 
       <img
-        src="https://i.postimg.cc/W4JQW2K2/siguenos-redes.png"
-        alt="Síguenos en redes"
+        src="https://i.postimg.cc/Kck0Tcs2/Cierre-de-Registro.png"
+        alt="Formulario cerrado"
         className="w-full max-w-md rounded-lg shadow-lg mb-6"
       />
 
@@ -28,7 +28,7 @@ const ReservationForm = () => {
           rel="noopener noreferrer"
           className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded text-center"
         >
-          Instagram Taco Game
+          Instagram Taco Game Condesa
         </a>
 
         <a
